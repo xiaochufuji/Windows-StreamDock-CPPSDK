@@ -1,29 +1,29 @@
 #include "streamDock.h"
 
+streamDock::streamDock(tranSport *transport,struct hid_device_info  *devInfo){
 
-streamDock::streamDock(tranSport* transport, struct hid_device_info* devInfo) {
+    this->transport=transport;
 
-    this->transport = transport;
-
-    this->vendor_id = devInfo->vendor_id;
-    this->product_id = devInfo->product_id;
-    this->product_string = devInfo->product_string;
-    this->path = devInfo->path;
-    this->serial_number = devInfo->serial_number;
-    this->manufacturer_string = devInfo->manufacturer_string;
-    this->release_number = devInfo->release_number;
-
+    this->vendor_id=devInfo->vendor_id;
+    this->product_id=devInfo->product_id;
+    this->product_string=devInfo->product_string;
+    this->path=devInfo->path;
+    this->serial_number=devInfo->serial_number;
+    this->manufacturer_string=devInfo->manufacturer_string;
+    this->release_number=devInfo->release_number;
+    //std::cout << path << std::endl;
+    this->mtx = new std::mutex();
 }
 
 
-unsigned char* streamDock::getFirmVersion(int lenth)
+unsigned char *streamDock::getFirmVersion(int lenth)
 {
-    return NULL;
+    return this->transport->getInputReport(lenth);
 }
 
 int streamDock::open()
 {
-    if (this->transport->open(this->path) == -1)
+    if(this->transport->open(this->path)==-1)
     {
         return -1;
     }
@@ -40,32 +40,37 @@ int streamDock::setBrightness(int percent)
     return 0;
 }
 
-int streamDock::setBackgroundImg(std::string path)
+ int streamDock::setBackgroundImg(std::string path)
+ {
+     return 0;
+ }
+
+ int streamDock::setBackgroundImgData(unsigned char* imagedata)
+ {
+     return 0;
+ }
+
+
+unsigned char * streamDock::read()
 {
     return 0;
 }
 
-int streamDock::setBackgroundImgData(std::vector<unsigned char>buffer, int width, int height)
+void streamDock::read(std::vector<unsigned char>& vec)
+{
+}
+
+int streamDock::setKeyImg(std::string path,int key)
 {
     return 0;
 }
 
-unsigned char* streamDock::read()
+int streamDock::setKeyImgData(unsigned char* imagedata, int key)
 {
     return 0;
 }
 
-int streamDock::setKeyImg(std::string path, int key)
-{
-    return 0;
-}
-
-int streamDock::setKeyImgData(unsigned char* imagedata, int width, int height, int key)
-{
-    return 0;
-}
-
-int streamDock::cleaerIcon(int index)
+int streamDock::clearIcon(int index)
 {
     return this->transport->keyClear(index);
 }
@@ -84,6 +89,11 @@ int streamDock::wakeScreen()
 int streamDock::refresh()
 {
     return this->transport->refresh();
+}
+
+char* streamDock::getPath()
+{
+    return this->path;
 }
 
 

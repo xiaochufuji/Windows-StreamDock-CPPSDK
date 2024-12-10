@@ -5,6 +5,8 @@
 #include "hidapi.h"
 #include <algorithm>
 #include <vector>
+#include <mutex>
+
 class streamDock {
 
 public:
@@ -36,18 +38,17 @@ public:
 
 	/*
 	@note:设置设备屏幕的背景图片
-	@param buffer ：存有RGB数据的vector容器
-	@param width ：图片的宽
-	@param buffer ：图片的高
+	@param path ：图片的路径
 	@return 成功返回1，如果出错返回-1
 	*/
-	virtual int setBackgroundImgData(std::vector<unsigned char>buffer, int width, int height);
+	virtual int setBackgroundImgData(unsigned char* imagedata);
 
 	/*
 	@note:接受设备发送的信息
 	@return 成功返回获得的数组首地址，如果出错返回NULL
 	*/
 	virtual unsigned char* read();
+	virtual void read(std::vector<unsigned char>&vec);
 	/*
 	@note:设置设备按键的图标
 	@param path ：图片的路径
@@ -57,17 +58,17 @@ public:
 
 	/*
 	@note:设置设备按键的图标
-	@param imagedata ：图片像素数据数组
+	@param imagedata ：图片像素数据数组 
 	@return 成功返回1，如果出错返回-1
 	*/
-	virtual int setKeyImgData(unsigned char* imagedata, int width, int height, int key);
+	virtual int setKeyImgData(unsigned char *imagedata, int key);
 
 	/*
 	@note:清空按键图标
 	@param index:按键的标号
 	@return:成功返回1，失败返回-1
 	*/
-	virtual int cleaerIcon(int index);
+	virtual int clearIcon(int index);
 	/*
 	@note:清空所有按键图标
 	@return:成功返回1，失败返回-1
@@ -83,26 +84,27 @@ public:
 	*/
 	int refresh();
 
+	char* getPath();
 
-
-	tranSport* transport;
-private:
-	/** Platform-specific device path */
-	char* path;
 	/** Device Vendor ID */
 	unsigned short vendor_id;
 	/** Device Product ID */
 	unsigned short product_id;
+	tranSport* transport;
+	int id;
+private:
+	/** Platform-specific device path */
+	char* path;
 	/** Serial Number */
 	wchar_t* serial_number;
-	/** Device Release Number in binary-coded decimal,also known as Device Version Number */
+	/** Device Release Number in binary-coded decimal,
+		also known as Device Version Number */
 	unsigned short release_number;
 	/** Manufacturer String */
 	wchar_t* manufacturer_string;
 	/** Product string */
 	wchar_t* product_string;
-
-
+	std::mutex* mtx; // 创建一个互斥锁
 };
 
 #endif

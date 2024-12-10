@@ -2,76 +2,16 @@
 
 DeviceManager * other;
 
-LRESULT CALLBACK WindowProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
-{
-    Sleep(100);                                           //延时一下使设备能够被加载
-    std::vector<std::tuple<int, int, int>> products = {
-
-        {std::make_tuple((int)USBVendorIDs::USB_VID, (int)USBProductIDs::USB_PID_STREAMDOCK_936,1)}
-
-    };
-    switch (message)
-    {
-    case WM_DEVICECHANGE:
-        if (wParam == DBT_DEVICEARRIVAL)
-        {
-            for (const auto& product : products) {
-                struct hid_device_info* info = other->transport->enumerate(std::get<0>(product), std::get<1>(product));
-                std::cout << info << std::endl;
-                while (info)
-                {
-                    if (other->streamDockmaps->find(info->path) == other->streamDockmaps->end())
-                    {
-                        (*other->streamDockmaps)[info->path] =new streamDock293(other->transport,info);
-                        //this->transport->freeEnumerate()
-                        std::cout << "创建成功: " << std::endl;
-                        break;
-                    }
-                    info = info->next;
-                }
-            }
-            
-        }
-        else if(wParam == DBT_DEVICEREMOVECOMPLETE)
-        {
-            for (const auto& product : products) {
-                struct hid_device_info* info = other->transport->enumerate(std::get<0>(product), std::get<1>(product));
-                std::cout << info << std::endl;
-                int flag = 0;
-                for (auto it = other->streamDockmaps->begin(); it != other->streamDockmaps->end(); it++)
-                {
-                    flag = 0;
-                    while (info)
-                    {
-                        std::cout << "path" << it->first << "   " << info->path << std::endl;
-                        if (strcmp(it->first, info->path) == 0)
-                        {
-                            flag = 1;
-                        }
-
-                        info = info->next;
-                    }
-                    if (flag == 0)
-                    {
-                        other->streamDockmaps->erase(it);
-                        std::cout << "删除成功: " << std::endl;
-                        break;
-                    }
-
-
-                }
-            }
-        }
-        break;
-    default:
-        return DefWindowProc(hWnd, message, wParam, lParam);
-    }
-    return 0;
-}
 DeviceManager::DeviceManager()
 {
     this->transport=new tranSport();
-    this->streamDockmaps=new std::map<char *,streamDock *>;
+    this->streamDockmaps = new std::map<char*, streamDock*>;
+    this->threadMaps = new std::map<std::string, bool>;
+    this->deviceType = new std::map<int, int>;
+    (*this->deviceType)[1] = 0;
+    (*this->deviceType)[2] = 0;
+    (*this->deviceType)[3] = 0;
+    (*this->deviceType)[4] = 0;
     other = this;
 }
 
@@ -83,17 +23,24 @@ DeviceManager::~DeviceManager()
 
 std::map<char *,streamDock *> *DeviceManager::enumerate()
 {
+    delete this->streamDockmaps;
+    this->streamDockmaps = new std::map<char*, streamDock*>;
     std::vector<std::tuple<int, int, int>> products = {
-        
-        {std::make_tuple((int)USBVendorIDs::USB_VID, (int)USBProductIDs::USB_PID_STREAMDOCK_936,1)}
-        
-
-     
+        {std::make_tuple((int)USBVendorIDs::USB_VID, (int)USBProductIDs::USB_PID_STREAMDOCK_936,1)},
+        {std::make_tuple((int)USBVendorIDs::USB_VID293s, (int)USBProductIDs::USB_PID_STREAMDOCK_936s,2)},
+        {std::make_tuple((int)USBVendorIDs::USB_VID293V3, (int)USBProductIDs::USB_PID_STREAMDOCK_293V3,3)},
+        {std::make_tuple((int)USBVendorIDs::USB_VID293V3, (int)USBProductIDs::USB_PID_STREAMDOCK_293V3EN,3)},
+        {std::make_tuple((int)USBVendorIDs::USB_VID293V3, (int)USBProductIDs::USB_PID_STREAMDOCK_293V25,3)},
+        {std::make_tuple((int)USBVendorIDs::USB_VIDN3, (int)USBProductIDs::USB_PID_STREAMDOCK_N3,4)},
+        {std::make_tuple((int)USBVendorIDs::USB_VIDN3, (int)USBProductIDs::USB_PID_STREAMDOCK_N3EN,4)},
+        {std::make_tuple((int)USBVendorIDs::USB_VIDN4, (int)USBProductIDs::USB_PID_STREAMDOCK_N4,5)},
+        {std::make_tuple((int)USBVendorIDs::USB_VIDN4EN, (int)USBProductIDs::USB_PID_STREAMDOCK_N4EN,5)},
     };
 
     for(const auto& product : products){
-        struct hid_device_info *deviceInfo=this->transport->enumerate(std::get<0>(product),std::get<1>(product));
-        struct hid_device_info* deviceInfo1 = deviceInfo;
+        //std::cout << "enumerate:" << "\n";
+        struct hid_device_info * deviceInfo=this->transport->enumerate(std::get<0>(product),std::get<1>(product));
+        struct hid_device_info * deviceInfo1 = deviceInfo;
         
         while (deviceInfo)
         {
@@ -105,62 +52,32 @@ std::map<char *,streamDock *> *DeviceManager::enumerate()
             }
             if (std::get<2>(product)==1)
             {
-                node=new streamDock293(this->transport,deviceInfo);        //增加设备时在这个地方添加一个判断，生成不同的设备类
+                //增加设备时在这个地方添加一个判断，生成不同的设备类
+                node = new streamDock293(this->transport, deviceInfo);
+                (*this->streamDockmaps)[deviceInfo->path] = node;
+                (*this->deviceType)[std::get<2>(product)] = (*this->deviceType)[std::get<2>(product)] + 1;
             }
-            
-            
-            (*this->streamDockmaps)[deviceInfo->path]=node;
-            deviceInfo=deviceInfo->next;
+            else if (std::get<2>(product) == 3 && deviceInfo->usage == 1) {
+                node = new StreamDock293V3(this->transport, deviceInfo);
+                (*this->streamDockmaps)[deviceInfo->path] = node;
+                (*this->deviceType)[std::get<2>(product)] = (*this->deviceType)[std::get<2>(product)] + 1;
+            }
+            else if (std::get<2>(product) == 4 && deviceInfo->usage == 1) {
+                node = new StreamDockN3(this->transport, deviceInfo);
+                //node->id = 4;
+                (*this->streamDockmaps)[deviceInfo->path] = node;
+                (*this->deviceType)[std::get<2>(product)] = (*this->deviceType)[std::get<2>(product)] + 1;
+            }
+            else if (std::get<2>(product) == 5 && deviceInfo->usage == 1) {
+                node = new StreamDockN4(this->transport, deviceInfo);
+                //node->id = 4;
+                (*this->streamDockmaps)[deviceInfo->path] = node;
+                (*this->deviceType)[std::get<2>(product)] = (*this->deviceType)[std::get<2>(product)] + 1;
+            }
+            deviceInfo = deviceInfo->next;
+            //std::cout << deviceInfo->path <<std::endl;
         }
-        this->transport->freeEnumerate(deviceInfo1);
-        
+        //this->transport->freeEnumerate(deviceInfo1);
     }
     return streamDockmaps;
-}
-
-
-int DeviceManager::listen()
-{
-    HINSTANCE hInstance = GetModuleHandle(nullptr);
-
-    WNDCLASS wc = {};
-    wc.lpfnWndProc = WindowProc;
-    wc.hInstance = hInstance;
-    wc.lpszClassName = L"SampleClass";
-    RegisterClass(&wc);
-
-    HWND hwnd = CreateWindowEx(
-        0,
-        L"SampleClass",
-        L"Sample Window",
-        0,
-        0, 0, 0, 0,
-        HWND_MESSAGE, // No actual window is created
-        nullptr,
-        hInstance,
-        nullptr
-    );
-
-    if (!hwnd) {
-        std::cerr << "Failed to create window." << std::endl;
-        return 1;
-    }
-    // Register for device notifications
-    DEV_BROADCAST_DEVICEINTERFACE dbdi = {};
-    dbdi.dbcc_size = sizeof(dbdi);
-    dbdi.dbcc_devicetype = DBT_DEVTYP_DEVICEINTERFACE;
-    dbdi.dbcc_classguid = GUID_DEVINTERFACE_USB_DEVICE;
-    HDEVNOTIFY hDevNotify = RegisterDeviceNotification(hwnd, &dbdi, DEVICE_NOTIFY_WINDOW_HANDLE);
-    if (!hDevNotify) {
-        std::cerr << "Failed to register for device notifications." << std::endl;
-        return 1;
-    }
-
-    MSG msg;
-    while (GetMessage(&msg, nullptr, 0, 0)) {
-        TranslateMessage(&msg);
-        DispatchMessage(&msg);
-    }
-
-    return 0;
 }

@@ -18,35 +18,24 @@
     <ClCompile Include="demo.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="DeviceManager.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
     <ClCompile Include="streamDock.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="streamDock293.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="DeviceManager.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="hidapi.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="productIDs.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="streamDock.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="streamDock293.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="tranSport.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
+    <ClCompile Include="DeviceManager.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="StreamDockN3.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="StreamDock293V3.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="StreamDockN4.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Image Include="1.jpg">
@@ -58,18 +47,50 @@
     <Image Include="3.jpg">
       <Filter>资源文件</Filter>
     </Image>
-    <Image Include="3.png">
-      <Filter>资源文件</Filter>
-    </Image>
     <Image Include="hy.png">
       <Filter>资源文件</Filter>
     </Image>
     <Image Include="R-C.png">
       <Filter>资源文件</Filter>
     </Image>
+    <Image Include="3.png">
+      <Filter>资源文件</Filter>
+    </Image>
+    <Image Include="hy1.png">
+      <Filter>资源文件</Filter>
+    </Image>
   </ItemGroup>
   <ItemGroup>
-    <Library Include="transport\transport.lib">
+    <ClInclude Include="tranSport.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="productIDs.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="streamDock.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="streamDock293.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="DeviceManager.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="hidapi.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="StreamDockN3.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="StreamDock293V3.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="StreamDockN4.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Library Include="hidapi.lib">
       <Filter>资源文件</Filter>
     </Library>
   </ItemGroup>

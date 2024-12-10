@@ -20,6 +20,7 @@
 #include <opencv2/imgproc/imgproc.hpp>
 #include <opencv2/core/hal/interface.h>
 #include <filesystem>
+#include <fstream>
 
 //using namespace cv;
 
@@ -30,17 +31,16 @@ private:
 
 public:
 
-    streamDock293(tranSport* transport, struct hid_device_info* devInfo);
+    streamDock293(tranSport *transport,struct hid_device_info *devInfo);
     ~streamDock293();
 
-
-
+    int transform(int x);
     /*
         @note:获取设备的固件版本
-        @param lenth ：固件版本的长度 
+        @param lenth ：固件版本的长度
         @return 返回固件版本的版本号存放数组的首地址，如果出错返回空
     */
-    unsigned char* getFirmVersion(int lenth);
+    unsigned char *getFirmVersion(int lenth );
 
     /*
         @note:设置设备屏幕的亮度,如果传入的值小于0，值会被拉回0，如果大于100会被回100
@@ -57,33 +57,33 @@ public:
     int setBackgroundImg(std::string path);
 
     /*
-       @note:设置设备屏幕的背景图片
-       @param path ：图片的路径
-       @return 成功返回1，如果出错返回-1
-   */
-    int setBackgroundImgData(std::vector<unsigned char>buffer, int width, int height);
+        @note:设置设备屏幕的背景图片
+        @param path ：图片的路径
+        @return 成功返回1，如果出错返回-1
+    */
+    int setBackgroundImgData(unsigned char* imagedata);
 
-    /*
-       @note:接受设备发送的信息 数据传送成功时会返回ack ok ,当设备连接激活时，按下按键会返回一个unsigned char数组，下标为9的字节为按键编号，下标为10的字节存放按键状态0x00抬起，0x01按下
-       @return 成功返回获得的数组首地址，如果出错返回NULL
-   */
-    unsigned char* read();
-    /*
-       @note:设置设备按键的图标
-       @param path ：图片的路径
-       @return 成功返回1，如果出错返回-1
-   */
-    int setKeyImg(std::string path, int key);
+
+     /*
+        @note:接受设备发送的信息
+        @return 成功返回获得的数组首地址，如果出错返回NULL
+    */
+    unsigned char * read();
+    void read(std::vector<unsigned char>& vec);
+     /*
+        @note:设置设备按键的图标
+        @param path ：图片的路径
+        @return 成功返回1，如果出错返回-1
+    */
+    int setKeyImg(std::string path,int key);
     /*
         @note:设置设备屏幕的按键图片
         @param path ：存放图片数据的数组
         @return 成功返回1，如果出错返回-1
     */
-    int setKeyImgData(unsigned char* imagedata, int width, int height, int key);
+    int setKeyImgData(unsigned char* imagedata, int key);
+
+    int clearIcon(int index);
 };
-
-
-
-
 
 #endif

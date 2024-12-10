@@ -6,6 +6,9 @@
 #include "streamDock.h"
 #include "productIDs.h"
 #include "streamDock293.h"
+#include "StreamDockN3.h"
+#include "StreamDockN4.h"
+#include "StreamDock293V3.h"
 #include "hidapi.h"
 #include <map>
 #include <tuple>
@@ -29,13 +32,12 @@ private:
 public:
     DeviceManager(/* args */);
     ~DeviceManager();
-    //遍历设备，给每个在线的设备创建对应的设备类
     std::map<char *,streamDock *> *enumerate();
-    tranSport *transport;
-    std::map<char *,streamDock *> *streamDockmaps;
 
-    //监听设备插拔
-    int listen();
+    std::map<char*, streamDock*>* streamDockmaps;
+    std::map<std::string, bool>* threadMaps;
+    std::map<int, int>* deviceType;
+    tranSport *transport;
 };
 
 #endif
