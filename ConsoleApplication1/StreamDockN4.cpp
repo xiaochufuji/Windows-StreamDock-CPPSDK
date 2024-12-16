@@ -1,6 +1,6 @@
 #include "StreamDockN4.h"
 
-StreamDockN4::StreamDockN4(tranSport* transport, struct hid_device_info* devInfo) :streamDock(transport, devInfo) {
+StreamDockN4::StreamDockN4(tranSport* transport, struct hid_device_info* devInfo) :StreamDock(transport, devInfo) {
 
 }
 
@@ -32,6 +32,11 @@ int StreamDockN4::setBackgroundImg(std::string path)
     //std::cout << "path   setBackgroundImg "<<path << "\n";
     if (image.empty()) {
         std::cerr << "Unable to load image:" << path << std::endl;
+        return -1;
+    }
+    if (image.cols > 800 || image.rows > 480)
+    {
+        std::cout << "the picture size isn't suitable" << std::endl;
         return -1;
     }
     //使用flip函数实现180°旋转 -1表示沿x和y轴翻转
@@ -106,7 +111,11 @@ int StreamDockN4::setKeyImg(std::string path, int key)
         std::cerr << "Unable to load image: " << path << std::endl;
         return -1;
     }
-
+    if (image.cols > 112 || image.rows > 112)
+    {
+        std::cout << "the picture size isn't suitable" << std::endl;
+        return -1;
+    }
     // 检查是否有透明通道（4 通道）
     if (image.channels() == 4) {
         // 分离通道
@@ -141,12 +150,13 @@ int StreamDockN4::setKeyImg(std::string path, int key)
     }
 
     // 创建一个新的图像矩阵用于存储旋转后的图像
-    cv::Mat Image2;
-    //使用flip函数实现180°旋转 -1表示沿x和y轴翻转
-    cv::flip(image, Image2, -1);
+    cv::Mat image2 = image.clone();
+    rotate(image, image2);
+    ////使用flip函数实现180°旋转 -1表示沿x和y轴翻转
+    //cv::flip(image, Image2, -1);
 
     // 保存旋转后的图像
-    cv::imwrite("347274857239.jpg", Image2);
+    cv::imwrite("347274857239.jpg", image2);
 
     // 调用保存的图像路径
     int res = this->transport->setKeyImgDualDevice("347274857239.jpg", key);
@@ -170,8 +180,11 @@ int StreamDockN4::setKeyImgData(unsigned char* imagedata, int key)
         cv::Mat img(height, width, CV_MAKETYPE(CV_8U, 3), imagedata, static_cast<size_t>(width * 3));
 
         //使用flip函数实现180°旋转 -1表示沿x和y轴翻转
-        cv::flip(img, img, -1);
-        cv::imwrite("N4Data347274857239.jpg", img);
+        //cv::flip(img, img, -1);
+        
+        cv::Mat img2 = img.clone();
+        rotate(img, img2);
+        cv::imwrite("N4Data347274857239.jpg", img2);
         int res = this->transport->setKeyImgDataDualDevice("N4Data347274857239.jpg", key);
         // 删除临时文件
         std::remove("N4Data347274857239.jpg");

@@ -1,7 +1,7 @@
 #ifndef _STREAMDOCK293_
 #define _STREAMDOCK293_
 
-#include "streamDock.h"
+#include "StreamDock.h"
 #include "tranSport.h"
 #include <iostream>
 #include "hidapi.h"
@@ -25,14 +25,14 @@
 //using namespace cv;
 
 // #include "png.h"
-class streamDock293 :public streamDock
+class StreamDock293 :public StreamDock
 {
 private:
 
 public:
 
-    streamDock293(tranSport *transport,struct hid_device_info *devInfo);
-    ~streamDock293();
+    StreamDock293(tranSport *transport,struct hid_device_info *devInfo);
+    ~StreamDock293();
 
     int transform(int x);
     /*

@@ -1,5 +1,5 @@
 #pragma once
-#include "streamDock.h"
+#include "StreamDock.h"
 #include "tranSport.h"
 #include <iostream>
 #include "hidapi.h"
@@ -18,7 +18,7 @@
 #include <opencv2/core/hal/interface.h>
 #include <filesystem>
 #include <fstream>
-class StreamDock293V3 :public streamDock
+class StreamDock293V3 :public StreamDock
 {
 private:
 

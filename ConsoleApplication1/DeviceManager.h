@@ -3,9 +3,9 @@
 
 #include <windows.h>
 #include "tranSport.h"
-#include "streamDock.h"
+#include "StreamDock.h"
 #include "productIDs.h"
-#include "streamDock293.h"
+#include "StreamDock293.h"
 #include "StreamDockN3.h"
 #include "StreamDockN4.h"
 #include "StreamDock293V3.h"
@@ -32,9 +32,11 @@ private:
 public:
     DeviceManager(/* args */);
     ~DeviceManager();
-    std::map<char *,streamDock *> *enumerate();
+    std::map<char *,StreamDock *> *enumerate();
+    int listen();
 
-    std::map<char*, streamDock*>* streamDockmaps;
+
+    std::map<char*, StreamDock*>* StreamDockmaps;
     std::map<std::string, bool>* threadMaps;
     std::map<int, int>* deviceType;
     tranSport *transport;

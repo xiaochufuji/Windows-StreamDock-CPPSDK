@@ -1,5 +1,5 @@
 #pragma once
-#include "streamDock.h"
+#include "StreamDock.h"
 #include "tranSport.h"
 #include <iostream>
 #include "hidapi.h"
@@ -19,7 +19,7 @@
 #include <filesystem>
 #include <fstream>
 
-class StreamDockN3 :public streamDock
+class StreamDockN3 :public StreamDock
 {
 public:
 

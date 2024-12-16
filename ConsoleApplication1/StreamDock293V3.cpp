@@ -1,6 +1,6 @@
 #include "StreamDock293V3.h"
 
-StreamDock293V3::StreamDock293V3(tranSport* transport, struct hid_device_info* devInfo) :streamDock(transport, devInfo) {
+StreamDock293V3::StreamDock293V3(tranSport* transport, struct hid_device_info* devInfo) :StreamDock(transport, devInfo) {
 
 }
 
@@ -33,6 +33,11 @@ int StreamDock293V3::setBackgroundImg(std::string path)
     //std::cout << "path   setBackgroundImg "<<path << "\n";
     if (image.empty()) {
         std::cerr << "Unable to load image:" << path << std::endl;
+        return -1;
+    }
+    if (image.cols > 800 || image.rows > 480)
+    {
+        std::cout << "the picture size isn't suitable" << std::endl;
         return -1;
     }
     //cv::rotate(image, Image2, cv::ROTATE_90_CLOCKWISE); // 顺时针旋转 90 度
@@ -102,57 +107,28 @@ unsigned char* StreamDock293V3::read()
 int StreamDock293V3::setKeyImg(std::string path, int key)
 {
     key = transform(key);
-    cv::Mat image = cv::imread(path, cv::IMREAD_UNCHANGED); // 加载图像，保留透明通道
+    cv::Mat image = cv::imread(path, cv::IMREAD_COLOR); // 加载图像，保留透明通道
     if (image.empty()) {
         std::cerr << "Unable to load image: " << path << std::endl;
         return -1;
     }
-
-    // 检查是否有透明通道（4 通道）
-    if (image.channels() == 4) {
-        // 分离通道
-        std::vector<cv::Mat> channels(4);
-        cv::split(image, channels);
-
-        cv::Mat alpha = channels[3]; // Alpha 通道
-        cv::Mat imageBGR;
-
-        // 提取 BGR 通道
-        std::vector<cv::Mat> bgrChannels = { channels[0], channels[1], channels[2] };
-        cv::merge(bgrChannels, imageBGR);
-
-        // 遍历每个像素，处理透明部分
-        for (int y = 0; y < image.rows; y++) {
-            for (int x = 0; x < image.cols; x++) {
-                uchar alphaValue = alpha.at<uchar>(y, x);
-
-                if (alphaValue < 255) { // 半透明或完全透明
-                    cv::Vec3b& pixel = imageBGR.at<cv::Vec3b>(y, x);
-                    double blendFactor = alphaValue / 255.0;
-
-                    // 混合黑色与原始颜色
-                    pixel[0] = pixel[0] * blendFactor; // Blue
-                    pixel[1] = pixel[1] * blendFactor; // Green
-                    pixel[2] = pixel[2] * blendFactor; // Red
-                }
-            }
-        }
-
-        image = imageBGR; // 更新为处理后的图像
+    if (image.cols > 112 || image.rows > 112)
+    {
+        std::cout << "the picture size isn't suitable" << std::endl;
+        return -1;
     }
-
-    // 创建一个新的图像矩阵用于存储旋转后的图像
-    cv::Mat Image2;
-    //cv::rotate(image, Image2, cv::ROTATE_90_CLOCKWISE); // 顺时针旋转 90 度
-    //使用flip函数实现180°旋转 -1表示沿x和y轴翻转
-    cv::flip(image, Image2, -1);
+    //// 创建一个新的图像矩阵用于存储旋转后的图像
+    //cv::Mat Image2;
+    ////cv::rotate(image, Image2, cv::ROTATE_90_CLOCKWISE); // 顺时针旋转 90 度
+    ////使用flip函数实现180°旋转 -1表示沿x和y轴翻转
+    //cv::flip(image, Image2, -1);
+    cv::Mat image2 = image.clone();
+    rotate(image, image2);
 
     // 保存旋转后的图像
-    cv::imwrite("293v3347274857239.jpg", image);
-
+    cv::imwrite("293v3347274857239.jpg", image2);
     // 调用保存的图像路径
     int res = this->transport->setKeyImgDualDevice("293v3347274857239.jpg", key);
-
     // 删除临时文件
     std::remove("293v3347274857239.jpg");
     return res;
@@ -167,13 +143,17 @@ int StreamDock293V3::setKeyImgData(unsigned char* imagedata, int key)
         int width = 112;
 
         // 创建图像
-        cv::Mat img(height, width, CV_MAKETYPE(CV_8U, 3), imagedata, static_cast<size_t>(width * 3));
+        cv::Mat img(height, width, CV_MAKETYPE(CV_8U, 3), imagedata, static_cast<size_t>(width * 3)), img2;
 
         // 顺时针旋转 90 度
         //cv::rotate(img, img, cv::ROTATE_180_CLOCKWISE);
         //使用flip函数实现180°旋转 -1表示沿x和y轴翻转
-        cv::flip(img, img, -1);
-        cv::imwrite("293v3Data347274857239.jpg", img);
+        cv::flip(img, img2, -1);
+        //cv::Mat img2 = img.clone();
+        //rotate(img, img2);
+
+
+        cv::imwrite("293v3Data347274857239.jpg", img2);
         int res = this->transport->setKeyImgDataDualDevice("293v3Data347274857239.jpg", key);
         // 删除临时文件
         std::remove("293v3Data347274857239.jpg");

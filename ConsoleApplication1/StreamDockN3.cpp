@@ -1,6 +1,6 @@
 #include "StreamDockN3.h"
 
-StreamDockN3::StreamDockN3(tranSport* transport, struct hid_device_info* devInfo) :streamDock(transport, devInfo) {
+StreamDockN3::StreamDockN3(tranSport* transport, struct hid_device_info* devInfo) :StreamDock(transport, devInfo) {
 
 }
 
@@ -19,6 +19,11 @@ int StreamDockN3::setBackgroundImg(std::string path)
 
     // 读取图像文件
     cv::Mat image = cv::imread(path), Image2;
+    if (image.cols > 320 || image.rows > 240)
+    {
+        std::cout << "the picture size isn't suitable" << std::endl;
+        return -1;
+    }
     //std::cout << "path   setBackgroundImg "<<path << "\n";
     if (image.empty()) {
         std::cerr << "Unable to load image:" << path << std::endl;
@@ -94,7 +99,11 @@ int StreamDockN3::setKeyImg(std::string path, int key)
         std::cerr << "Unable to load image: " << path << std::endl;
         return -1;
     }
-
+    if (image.cols > 64 || image.rows > 64)
+    {
+        std::cout << "the picture size isn't suitable" << std::endl;
+        return -1;
+    }
     // 检查是否有透明通道（4 通道）
     if (image.channels() == 4) {
         // 分离通道
@@ -129,8 +138,9 @@ int StreamDockN3::setKeyImg(std::string path, int key)
     }
 
     // 创建一个新的图像矩阵用于存储旋转后的图像
-    cv::Mat Image2;
-    cv::rotate(image, Image2, cv::ROTATE_90_CLOCKWISE); // 顺时针旋转 90 度
+    //cv::Mat Image2;
+    //cv::rotate(image, Image2, cv::ROTATE_90_CLOCKWISE); // 顺时针旋转 90 度
+    cv::Mat Image2 = rotate90Clockwise(image);
 
     // 保存旋转后的图像
     cv::imwrite("347274857239.jpg", Image2); 
@@ -154,8 +164,10 @@ int StreamDockN3::setKeyImgData(unsigned char* imagedata, int key)
         cv::Mat img(height, width, CV_MAKETYPE(CV_8U, 3), imagedata, static_cast<size_t>(width * 3));
 
         // 顺时针旋转 90 度
-        cv::rotate(img, img, cv::ROTATE_90_CLOCKWISE);
-        cv::imwrite("Data347274857239.jpg", img);
+        //cv::rotate(img, img, cv::ROTATE_90_CLOCKWISE);
+        cv::Mat Image2 = rotate90Clockwise(img);
+
+        cv::imwrite("Data347274857239.jpg", Image2);
         int res = this->transport->setKeyImgDataDualDevice("Data347274857239.jpg",key);
         // 删除临时文件
         std::remove("Data347274857239.jpg");

@@ -6,11 +6,12 @@
 #include <algorithm>
 #include <vector>
 #include <mutex>
+#include <opencv2/opencv.hpp>
 
-class streamDock {
+class StreamDock {
 
 public:
-	streamDock(tranSport* transport, struct hid_device_info* devInfo);
+	StreamDock(tranSport* transport, struct hid_device_info* devInfo);
 	/*
 	@note:获取设备的固件版本
 	@param lenth ：固件版本的长度
@@ -92,6 +93,11 @@ public:
 	unsigned short product_id;
 	tranSport* transport;
 	int id;
+
+protected:
+	void rotate(cv::Mat& img1, cv::Mat& img2);
+	cv::Mat rotate90Clockwise(const cv::Mat& image);
+
 private:
 	/** Platform-specific device path */
 	char* path;
@@ -105,6 +111,7 @@ private:
 	/** Product string */
 	wchar_t* product_string;
 	std::mutex* mtx; // 创建一个互斥锁
+	
 };
 
 #endif

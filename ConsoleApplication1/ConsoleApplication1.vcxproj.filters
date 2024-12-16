@@ -18,10 +18,10 @@
     <ClCompile Include="demo.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="streamDock.cpp">
+    <ClCompile Include="StreamDock.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="streamDock293.cpp">
+    <ClCompile Include="StreamDock293.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="DeviceManager.cpp">
@@ -61,16 +61,16 @@
     </Image>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="tranSport.h">
+    <ClInclude Include="transport.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="productIDs.h">
+    <ClInclude Include="ProductIDs.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="streamDock.h">
+    <ClInclude Include="StreamDock.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="streamDock293.h">
+    <ClInclude Include="StreamDock293.h">
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="DeviceManager.h">

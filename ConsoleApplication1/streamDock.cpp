@@ -1,6 +1,6 @@
-#include "streamDock.h"
+#include "StreamDock.h"
 
-streamDock::streamDock(tranSport *transport,struct hid_device_info  *devInfo){
+StreamDock::StreamDock(tranSport *transport,struct hid_device_info  *devInfo){
 
     this->transport=transport;
 
@@ -16,12 +16,12 @@ streamDock::streamDock(tranSport *transport,struct hid_device_info  *devInfo){
 }
 
 
-unsigned char *streamDock::getFirmVersion(int lenth)
+unsigned char *StreamDock::getFirmVersion(int lenth)
 {
     return this->transport->getInputReport(lenth);
 }
 
-int streamDock::open()
+int StreamDock::open()
 {
     if(this->transport->open(this->path)==-1)
     {
@@ -30,70 +30,98 @@ int streamDock::open()
     return 1;
 }
 
-int streamDock::disconnected()
+int StreamDock::disconnected()
 {
     return this->transport->disconnected();
 }
 
-int streamDock::setBrightness(int percent)
+int StreamDock::setBrightness(int percent)
 {
     return 0;
 }
 
- int streamDock::setBackgroundImg(std::string path)
+ int StreamDock::setBackgroundImg(std::string path)
  {
      return 0;
  }
 
- int streamDock::setBackgroundImgData(unsigned char* imagedata)
+ int StreamDock::setBackgroundImgData(unsigned char* imagedata)
  {
      return 0;
  }
 
 
-unsigned char * streamDock::read()
+unsigned char * StreamDock::read()
 {
     return 0;
 }
 
-void streamDock::read(std::vector<unsigned char>& vec)
+void StreamDock::read(std::vector<unsigned char>& vec)
 {
 }
 
-int streamDock::setKeyImg(std::string path,int key)
-{
-    return 0;
-}
-
-int streamDock::setKeyImgData(unsigned char* imagedata, int key)
+int StreamDock::setKeyImg(std::string path,int key)
 {
     return 0;
 }
 
-int streamDock::clearIcon(int index)
+int StreamDock::setKeyImgData(unsigned char* imagedata, int key)
+{
+    return 0;
+}
+
+int StreamDock::clearIcon(int index)
 {
     return this->transport->keyClear(index);
 }
 
-int streamDock::clearAllIcon()
+int StreamDock::clearAllIcon()
 {
     return this->transport->keyAllClear();
 }
 
-int streamDock::wakeScreen()
+int StreamDock::wakeScreen()
 {
     return this->transport->wakeScreen();
 }
 
 
-int streamDock::refresh()
+int StreamDock::refresh()
 {
     return this->transport->refresh();
 }
 
-char* streamDock::getPath()
+char* StreamDock::getPath()
 {
     return this->path;
+}
+
+void StreamDock::rotate(cv::Mat& img1, cv::Mat& img2)
+{
+    int rows = img1.rows;
+    int cols = img2.cols;
+
+    for (int y = 0; y < rows; y++) {
+        for (int x = 0; x < cols; x++) {
+            img2.at<cv::Vec3b>(rows - 1 - y, cols - 1 - x) = img1.at<cv::Vec3b>(y, x);
+        }
+    }
+}
+
+cv::Mat StreamDock::rotate90Clockwise(const cv::Mat& image)
+{
+    int rows = image.rows;
+    int cols = image.cols;
+
+    cv::Mat rotatedImage(cols, rows, image.type());
+
+    for (int y = 0; y < rows; ++y) {
+        for (int x = 0; x < cols; ++x) {
+            rotatedImage.at<cv::Vec3b>(x, rows - y - 1) = image.at<cv::Vec3b>(y, x);
+        }
+    }
+
+    return rotatedImage;
 }
 
 
