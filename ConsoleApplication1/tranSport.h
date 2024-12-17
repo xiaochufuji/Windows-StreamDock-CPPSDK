@@ -7,6 +7,7 @@
 #include <stdio.h>
 #include <sys/stat.h>
 #include <fstream>
+#include <vector>
 
 class tranSport
 {
@@ -15,125 +16,136 @@ private:
 public:
     tranSport();
     /*
-        @note:æ‰“å¼€è®¾å¤‡ï¼Œä½¿ç”¨è®¾å¤‡è·¯å¾„æ‰“å¼€
-        @param path ï¼šå›¾ç‰‡çš„è·¯å¾„
-        @return æˆåŠŸè¿”å›1ï¼Œå¦‚æœå‡ºé”™è¿”å›-1
+        @note:´ò¿ªÉè±¸£¬Ê¹ÓÃÉè±¸Â·¾¶´ò¿ª
+        @param path £ºÍ¼Æ¬µÄÂ·¾¶
+        @return ³É¹¦·µ»Ø1£¬Èç¹û³ö´í·µ»Ø-1
     */
     int open(char *path);
-     /*
-        @note:è·å–è®¾å¤‡çš„å›ºä»¶id
-        @param lenth ï¼šå›ºä»¶å·é•¿åº¦ï¼ˆé»˜è®¤å†™512ï¼‰
-        @return æˆåŠŸè¿”å›1ï¼Œå¦‚æœå‡ºé”™è¿”å›-1
-    */
+    /*
+       @note:»ñÈ¡Éè±¸µÄ¹Ì¼şid
+       @param lenth £º¹Ì¼şºÅ³¤¶È£¨Ä¬ÈÏĞ´512£©
+       @return ³É¹¦·µ»Ø1£¬Èç¹û³ö´í·µ»Ø-1
+   */
     unsigned char *getInputReport(int lenth);
-     /*
-        @note:è¯»å–è®¾å¤‡çš„åé¦ˆä¿¡æ¯ 
-        æŒ‰é”®äº‹ä»¶
-        byte            å†…å®¹        å€¼         æè¿°
-        data[0]     å›å¤çš„æ ¼å¼      0x41-A     
-        data[1]     å›å¤çš„æ ¼å¼      0x43-C  
-        data[2]     å›å¤çš„æ ¼å¼      0x4B-K  
-        data[3-4]       é¢„ç•™
-        data[5]     å›å¤çš„æ ¼å¼      0x4F-O  
-        data[6]     å›å¤çš„æ ¼å¼      0x4B-K
-        data[7-8]       é¢„ç•™
-        data[9]     æŒ‰é”®ä¸‹æ ‡        0x01-0x0F
-        data[10]     æŒ‰é”®äº‹ä»¶       0x00-0x01  0x00 æŒ‰é”®æŠ¬èµ·ï¼Œ0x01æŒ‰é”®æŒ‰ä¸‹  
-        
-        åº”ç­”æ¶ˆæ¯  
-        data[0]     å›å¤çš„æ ¼å¼      0x41-A     
-        data[1]     å›å¤çš„æ ¼å¼      0x43-C  
-        data[2]     å›å¤çš„æ ¼å¼      0x4B-K  
-        data[3-4]       é¢„ç•™
-        data[5]     å›å¤çš„æ ¼å¼      0x4F-O  
-        data[6]     å›å¤çš„æ ¼å¼      0x4B-K
-        data[7-8]       é¢„ç•™
-        data[9]     è¡¨ç¤ºåº”ç­”        0x00
-        data[10-13]     é¢„ç•™  
-        @param data ï¼šç”¨æ¥æ¥å—åé¦ˆä¿¡æ¯çš„unsigned char æ•°ç»„
-        @param lenth ï¼šæ•°ç»„é•¿åº¦
-        @return æˆåŠŸè¿”å›1ï¼Œå¦‚æœå‡ºé”™è¿”å›-1
-    */
+    /*
+       @note:¶ÁÈ¡Éè±¸µÄ·´À¡ĞÅÏ¢
+       °´¼üÊÂ¼ş
+       byte            ÄÚÈİ        Öµ         ÃèÊö
+       data[0]     »Ø¸´µÄ¸ñÊ½      0x41-A
+       data[1]     »Ø¸´µÄ¸ñÊ½      0x43-C
+       data[2]     »Ø¸´µÄ¸ñÊ½      0x4B-K
+       data[3-4]       Ô¤Áô
+       data[5]     »Ø¸´µÄ¸ñÊ½      0x4F-O
+       data[6]     »Ø¸´µÄ¸ñÊ½      0x4B-K
+       data[7-8]       Ô¤Áô
+       data[9]     °´¼üÏÂ±ê        0x01-0x0F
+       data[10]     °´¼üÊÂ¼ş       0x00-0x01  0x00 °´¼üÌ§Æğ£¬0x01°´¼ü°´ÏÂ
+
+       Ó¦´ğÏûÏ¢
+       data[0]     »Ø¸´µÄ¸ñÊ½      0x41-A
+       data[1]     »Ø¸´µÄ¸ñÊ½      0x43-C
+       data[2]     »Ø¸´µÄ¸ñÊ½      0x4B-K
+       data[3-4]       Ô¤Áô
+       data[5]     »Ø¸´µÄ¸ñÊ½      0x4F-O
+       data[6]     »Ø¸´µÄ¸ñÊ½      0x4B-K
+       data[7-8]       Ô¤Áô
+       data[9]     ±íÊ¾Ó¦´ğ        0x00
+       data[10-13]     Ô¤Áô
+       @param data £ºÓÃÀ´½ÓÊÜ·´À¡ĞÅÏ¢µÄunsigned char Êı×é
+       @param lenth £ºÊı×é³¤¶È
+       @return ³É¹¦·µ»Ø1£¬Èç¹û³ö´í·µ»Ø-1
+   */
     int read(unsigned char *data,unsigned long lenth);
     /*
-        @note:å‘è®¾å¤‡ä¸‹å‘ä¿¡æ¯
-        @param data:è£…æœ‰æ•°æ®çš„unsigned charæ•°ç»„
-        @param lenthï¼šæ•°ç»„é•¿åº¦
-        @return æˆåŠŸè¿”å›1ï¼Œå¦‚æœå‡ºé”™è¿”å›-1
-    */
+       @note:ÏòÉè±¸ÏÂ·¢ĞÅÏ¢
+       @param data:×°ÓĞÊı¾İµÄunsigned charÊı×é
+       @param lenth£ºÊı×é³¤¶È
+       @return ³É¹¦·µ»Ø1£¬Èç¹û³ö´í·µ»Ø-1
+   */
     int write(unsigned char *data,unsigned long lenth);
     /*
-        @note:å°†enumerateè¿”å›çš„è®¾å¤‡ä¿¡æ¯åˆ—è¡¨é”€æ¯
-        @param devs ï¼šè£…æœ‰è®¾å¤‡ä¿¡æ¯çš„é“¾è¡¨
-        @return æˆåŠŸè¿”å›1ï¼Œå¦‚æœå‡ºé”™è¿”å›-1
-    */
-    void freeEnumerate(hid_device_info *devs);  
-     /*
-        @note:è·å–è®¾å¤‡ä¿¡æ¯åˆ—è¡¨
-        @param vidï¼šè®¾å¤‡vid
-        @param pidï¼šè®¾å¤‡pid
-        @return æˆåŠŸè¿”å›1ï¼Œå¦‚æœå‡ºé”™è¿”å›-1
-    */
+       @note:½«enumerate·µ»ØµÄÉè±¸ĞÅÏ¢ÁĞ±íÏú»Ù
+       @param devs £º×°ÓĞÉè±¸ĞÅÏ¢µÄÁ´±í
+       @return ³É¹¦·µ»Ø1£¬Èç¹û³ö´í·µ»Ø-1
+   */
+    void freeEnumerate(hid_device_info *devs);
+    /*
+       @note:»ñÈ¡Éè±¸ĞÅÏ¢ÁĞ±í
+       @param vid£ºÉè±¸vid
+       @param pid£ºÉè±¸pid
+       @return ³É¹¦·µ»Ø1£¬Èç¹û³ö´í·µ»Ø-1
+   */
     hid_device_info *enumerate(int vid, int pid);
     /*
-        @note:è®¾ç½®è®¾å¤‡å±å¹•äº®åº¦ 0-100
-        @param percent ï¼šäº®åº¦ 0-100
-        @return æˆåŠŸè¿”å›1ï¼Œå¦‚æœå‡ºé”™è¿”å›-1
-    */
+       @note:ÉèÖÃÉè±¸ÆÁÄ»ÁÁ¶È 0-100
+       @param percent £ºÁÁ¶È 0-100
+       @return ³É¹¦·µ»Ø1£¬Èç¹û³ö´í·µ»Ø-1
+   */
     int setBrightness(int percent);
     /*
-        @note:è®¾ç½®è®¾å¤‡å±å¹•çš„èƒŒæ™¯å›¾
-        @param bufferï¼šæ”¾æœ‰BGRæ•°æ®çš„unsigned charæ•°ç»„åœ°å€
-        @param sizeï¼šæ•°ç»„å¤§å°
-        @return æˆåŠŸè¿”å›1ï¼Œå¦‚æœå‡ºé”™è¿”å›-1
+        @note:ÉèÖÃÉè±¸ÆÁÄ»µÄ±³¾°Í¼
+        @param buffer£º·ÅÓĞBGRÊı¾İµÄunsigned charÊı×éµØÖ·
+        @param size£ºÊı×é´óĞ¡
+        @return ³É¹¦·µ»Ø1£¬Èç¹û³ö´í·µ»Ø-1
     */
-    int setBackgroundImg(unsigned char *buffer,int size);
-     /*
-        @note:è®¾ç½®è®¾å¤‡æŸä¸ªæŒ‰é”®çš„å›¾æ ‡
-        @param pathï¼šå›¾ç‰‡è·¯å¾„
-        @param keyï¼šæŒ‰é”®æ ‡å·
-        @return æˆåŠŸè¿”å›1ï¼Œå¦‚æœå‡ºé”™è¿”å›-1
-    */
-    int setKeyImg(std::string path,int key);
+    int setBackgroundImg(unsigned char* buffer, const int size);
+    
+    int setBackgroundImgDualDevice(std::string path);
     /*
-        @note:è®¾ç½®è®¾å¤‡æŸä¸ªæŒ‰é”®çš„å›¾æ ‡
-        @param bufferï¼Œè£…æœ‰å›¾ç‰‡ä¿¡æ¯çš„unsigned char æ•°ç»„
-        @param keyï¼šæŒ‰é”®æ ‡å·
-        @param widthï¼š å›¾ç‰‡é•¿åº¦
-        @param heightï¼šå›¾ç‰‡é«˜åº¦
-        @return æˆåŠŸè¿”å›1ï¼Œå¦‚æœå‡ºé”™è¿”å›-1
-    */
-    int setKeyImgdata(unsigned char* buffer, int key, int width, int height);
+     @note:ÉèÖÃÉè±¸Ä³¸ö°´¼üµÄÍ¼±ê
+     @param path£ºÍ¼Æ¬Â·¾¶
+     @param key£º°´¼ü±êºÅ
+     @return ³É¹¦·µ»Ø1£¬Èç¹û³ö´í·µ»Ø-1
+ */
+    int setKeyImg(std::string path, int key);
+
+    int setKeyImgDualDevice(std::string path, int key);
+    int setKeyImgDataDualDevice(std::string path,int key);
     /*
-        @note:æ¸…ç©ºæŸä¸ªæŒ‰é”®çš„å›¾æ ‡
-        @param index ï¼šæŒ‰é”®æ ‡å·ï¼ˆ1-15ï¼‰
-        @return æˆåŠŸè¿”å›1ï¼Œå¦‚æœå‡ºé”™è¿”å›-1
+        @note:ÉèÖÃÉè±¸Ä³¸ö°´¼üµÄÍ¼±ê
+        @param buffer£¬×°ÓĞÍ¼Æ¬ĞÅÏ¢µÄunsigned char Êı×é
+        @param key£º°´¼ü±êºÅ
+        @param width£º Í¼Æ¬³¤¶È
+        @param height£ºÍ¼Æ¬¸ß¶È
+        @return ³É¹¦·µ»Ø1£¬Èç¹û³ö´í·µ»Ø-1
     */
-    int keyClear(int index);
+    int setKeyImgData(/*unsigned char* buffer*/std::vector<unsigned char>buffer, int key, int width, int height);
     /*
-        @note:æ¸…ç©ºæ‰€æœ‰æŒ‰é”®çš„å›¾æ ‡
-        @return æˆåŠŸè¿”å›1ï¼Œå¦‚æœå‡ºé”™è¿”å›-1
+        @note:Çå¿ÕÄ³¸ö°´¼üµÄÍ¼±ê
+        @param index £º°´¼ü±êºÅ£¨1-15£©
+        @return ³É¹¦·µ»Ø1£¬Èç¹û³ö´í·µ»Ø-1
+    */
+    int keyClear(int i);
+    /*
+        @note:Çå¿ÕËùÓĞ°´¼üµÄÍ¼±ê
+        @return ³É¹¦·µ»Ø1£¬Èç¹û³ö´í·µ»Ø-1
     */
     int keyAllClear();
     /*
-        @note:å”¤é†’å±å¹•
-        @return æˆåŠŸè¿”å›1ï¼Œå¦‚æœå‡ºé”™è¿”å›-1
-    */
+       @note:»½ĞÑÆÁÄ»
+       @return ³É¹¦·µ»Ø1£¬Èç¹û³ö´í·µ»Ø-1
+   */
     int wakeScreen();
     /*
-        @note:åœ¨æ•°æ®ä¼ è¾“å®Œæˆåå¯ä»¥ç”¨è¿™ä¸ªåˆ·æ–°æ˜¾ç¤º
-        @return æˆåŠŸè¿”å›1ï¼Œå¦‚æœå‡ºé”™è¿”å›-1
+        @note:ÔÚÊı¾İ´«ÊäÍê³Éºó¿ÉÒÔÓÃÕâ¸öË¢ĞÂÏÔÊ¾
+        @return ³É¹¦·µ»Ø1£¬Èç¹û³ö´í·µ»Ø-1
     */
     int refresh();
-     /*
-        @note:æ–­å¼€è¿æ¥
-        @return æˆåŠŸè¿”å›1ï¼Œå¦‚æœå‡ºé”™è¿”å›-1
+    /*
+        @note:¶Ï¿ªÁ¬½Ó
+        @return ³É¹¦·µ»Ø1£¬Èç¹û³ö´í·µ»Ø-1
     */
     int disconnected();
     /*
-        @note:å…³é—­è®¾å¤‡
-        @return æˆåŠŸè¿”å›1ï¼Œå¦‚æœå‡ºé”™è¿”å›-1
+        @note:¹Ø±ÕÉè±¸
+        @return ³É¹¦·µ»Ø1£¬Èç¹û³ö´í·µ»Ø-1
     */
     void close();
 };
+
+
+
+ 
+    
+
 #endif
