@@ -1,14 +1,15 @@
-## ÍÆ¼öÊ¹ÓÃÆ½Ì¨VS2022-17
+## Recommended Platform: VS2022-17
 
-±¾ÏîÄ¿Ê¹ÓÃcmakeºÍninja¹¹½¨
-Ê¹ÓÃËµÃ÷£º
+### This project is built using CMake and Ninja.
 
-1. ´ò¿ªVisual Studio, È»ºóÊ¹ÓÃ`´ò¿ªÎÄ¼ş¼Ğ`Ñ¡Ïî£¬×¢ÒâÊÇ´ò¿ªÎÄ¼ş¼Ğ¶ø²»ÊÇ´ò¿ªÏîÄ¿£¬´ò¿ª`Windows-StreamDock-CPPSDK`¸ùÄ¿Â¼£¬Ö®ºóµÈ´ıvs×ÔĞĞÅäÖÃ¹¹½¨¼´¿É
-2. Ê¹ÓÃÇ°¿ÉÒÔÏÈ¿´Ò»ÏÂdemo.cppÖĞµÄÊ¾Àı´úÂë£¬È»ºó×ÔĞĞĞŞ¸Ä¡£
-3. Ä¿Ç°½öÖ§³Ö`293, 293V3, N3V25, N4`£¬Èç¹ûÄãÏë¿´ÄãµÄÉè±¸ÊÇ·ñÖ§³Ö£¬Çë¹Û¿´`ProductIDs.h`ÖĞµÄpidºÍvid¶Ô¡£
+#### Usage Instructionsï¼š
 
-Ê¹ÓÃÊ¾Àı£º
-´ó²¿·Ö¿ÉÓÃº¯Êı¶¼ÔÚ»ùÀàStreamDock.hÎÄ¼şÀïÃæ£¬Çë×ÔĞĞ²éÑ¯
+1. Open Visual Studio, then use the `Open Folder` option (make sure to open the folder, not a project). Open the root directory `Windows-StreamDock-CPPSDK`, and wait for VS to automatically configure the build.
+2. Before using the project, you may want to check out the example code in `demo.cpp` and modify it as needed.
+3. Currently, only `293, 293V3, N3V25, N4` are supported. If you want to check whether your device is supported, refer to the `ProductIDs.h` file for PID and VID pairs.
+
+#### Example Usage:
+Most available functions are in the base class `StreamDock.h`. Please refer to it as needed.
 
 ```cpp
 int main() {
@@ -27,3 +28,6 @@ int main() {
     }
 }
 ```
+
+
+
